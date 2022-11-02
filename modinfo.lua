@@ -1,7 +1,7 @@
 version = "1.2.0"
 name = "[DST]Xelin "..version
 author = "Xelin CretisZ"
-description = "---注意：这是我自设的专属私用人物，未经允许请勿使用、盗用、随意上传此模组，感谢配合！\n\nVersion "..version.."(21st Oct. 2022)\n\n\n\n作者&美术部分："..author.."(QQ :2354407596)\n美术支持：是之羽鸭(QQ：1205135061)\n代码部分：Wulmaw(QQ：3029998354)"
+description = "---注意：这是我自设的专属私用人物，未经允许请勿使用、盗用、随意上传此模组，感谢配合！\n\nVersion "..version.."(2nd Nov. 2022)\n\n\n\n作者&美术部分："..author.."(QQ :2354407596)\n美术支持：是之羽鸭(QQ：1205135061)\n代码部分：Wulmaw(QQ：3029998354)"
 
 forumthread = ""
 
@@ -21,8 +21,8 @@ icon_atlas = "modicon.xml"
 icon = "modicon.tex"
 
 server_filter_tags = {
-"Xelin",
-"Xelin CretisZ",
+"xelin",
+"xelin cretisz",
 "咲灵",
 "character",
 }

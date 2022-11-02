@@ -352,32 +352,18 @@ end
 
 local function oneat(inst, food) 
 	if food and food.components.edible then
-		if food.prefab == "monstermeat" then
-			inst.components.health:DoDelta(20)--(-20+20)
-			inst.components.sanity:DoDelta(15)--(-15+15)
 
-		elseif food.prefab == "cookedmonstermeat" then
-			inst.components.health:DoDelta(3)--(-3+3)
-			inst.components.sanity:DoDelta(10)--(-10+10)
-	
-		elseif food.prefab == "monstermeat_dried" then
-			inst.components.health:DoDelta(3)--(-3+3)
-			inst.components.sanity:DoDelta(2)--(-2+-2)
+            --吃月亮相关的食物加幽魂值
+            local num = -100
+            if food.prefab == "shroomcake" then num=inst._soulcurrent:value()+60
+            elseif (food.prefab == "rock_avocado_fruit_ripe_cooked" or food.prefab == "moon_cap_cooked") then num = inst._soulcurrent:value()+30
+            elseif (food.prefab == "rock_avocado_fruit_ripe" or food.prefab == "moon_tree_blossom" or food.prefab == "moon_cap" or food.prefab == "moonbutterflywings") then num=inst._soulcurrent:value()+10
+            end
 
-            else
-                  --吃月亮相关的食物加幽魂值
-                  local num = -100
-                  if food.prefab == "shroomcake" then num=inst._soulcurrent:value()+60
-                  elseif (food.prefab == "rock_avocado_fruit_ripe_cooked" or food.prefab == "moon_cap_cooked") then num = inst._soulcurrent:value()+30
-                  elseif (food.prefab == "rock_avocado_fruit_ripe" or food.prefab == "moon_tree_blossom" or food.prefab == "moon_cap" or food.prefab == "moonbutterflywings") then num=inst._soulcurrent:value()+10
-                  end
-
-                  if num~=-100 then     
-                        inst.SoundEmitter:PlaySound("xelin_sound/xelin_sound/oneat", nil, 1)
-                        if num < inst._soulmax:value() then inst._soulcurrent:set(num)
-                        else inst._soulcurrent:set(inst._soulmax:value()) end
-                  end
-
+            if num~=-100 then     
+                  inst.SoundEmitter:PlaySound("xelin_sound/xelin_sound/oneat", nil, 1)
+                  if num < inst._soulmax:value() then inst._soulcurrent:set(num)
+                  else inst._soulcurrent:set(inst._soulmax:value()) end
             end
 	end
 end
@@ -403,28 +389,23 @@ end
 
 local function UpdateStatus(inst)
 	local level = inst.xelin_level
-	local hunger_percent = inst.components.hunger:GetPercent()
 	local health_percent = inst.components.health:GetPercent()
 
       inst._soulmax:set(100 + level)
       inst._soulcurrent:set(inst._soulcurrent:value()+1)
 
 	if level <= 80 then
-	inst.components.hunger.max = (20 + level * 1)
 	inst.components.health.maxhealth = (level*0.75)
 	
 	
 	elseif level > 80 and level <= 90 then
-	inst.components.hunger.max = 100
 	inst.components.health.maxhealth = (level*0.75)
 	
 	elseif level >= 100 then
-	inst.components.hunger.max = 100
 	inst.components.health.maxhealth = 75
 	
 	end
 
-	inst.components.hunger:SetPercent(hunger_percent)
 	inst.components.health:SetPercent(health_percent)
 		
 end
@@ -466,11 +447,7 @@ local function onpreload(inst, data)
             if data.health and data.health.health then
                   inst.components.health.currenthealth = data.health.health
             end
-		if data.hunger and data.hunger.hunger then
-                  inst.components.hunger.current = data.hunger.hunger
-            end
 		inst.components.health:DoDelta(0)
-		inst.components.hunger:DoDelta(0)
 
             if data.expcurrent then
                   inst.xelin_expcurrent = data.expcurrent
@@ -540,7 +517,7 @@ local common_postinit = function(inst)
   end)
 end
 
-local master_postinit = function(inst)
+local function master_postinit(inst)
 
 	inst.soundsname = "wendy"
 	--人物参数
@@ -552,13 +529,13 @@ local master_postinit = function(inst)
       inst.soulnum = 100
 
 	inst.components.health:SetMaxHealth(1) --1
-	inst.components.hunger:SetMax(20)  --20
+	inst.components.hunger:SetMax(175)
 	inst.components.sanity:SetMax(200) --200
 
-	inst.components.locomotor.walkspeed = (6)
-	inst.components.locomotor.runspeed = (7)
+	inst.components.locomotor.walkspeed = 6
+	inst.components.locomotor.runspeed = 7
 	inst.components.combat.damagemultiplier = 0.5
-	inst.components.hunger.hungerrate = 0.7 * TUNING.WILSON_HUNGER_RATE
+	inst.components.hunger.hungerrate = 1
 	inst.components.sanity.dapperness = 0
 	inst.components.temperature.overcoldtemp = 50
 
@@ -570,6 +547,11 @@ local master_postinit = function(inst)
 
   if inst.components.timer == nil then
         inst:AddComponent("timer")
+  end
+
+  if inst.components.eater ~= nil then
+      inst.components.eater:SetStrongStomach(true)
+      inst.components.eater:SetCanEatRawMeat(true)
   end
 
   inst:ListenForEvent("equip", UnEquip)
